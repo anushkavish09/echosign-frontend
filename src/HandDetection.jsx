@@ -91,10 +91,17 @@ const [recognizedText, setRecognizedText] = useState('')
 
   setPrediction(data.label || '')
 if (data.label && onRecognize) {
-  onRecognize(prev =>
-    prev ? prev + ' ' + data.label.toUpperCase()
-         : data.label.toUpperCase()
-  )
+  onRecognize(prev => {
+    const newWord = data.label.toUpperCase()
+
+    const words = prev.trim().split(' ')
+
+    if (words[words.length - 1] === newWord) {
+      return prev
+    }
+
+    return prev ? prev + ' ' + newWord : newWord
+  })
 }
   setConfidence(data.confidence || 0)
 })
