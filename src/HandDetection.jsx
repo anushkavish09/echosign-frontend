@@ -2,11 +2,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision'
 
-function HandDetection() {
+function HandDetection({ onRecognize }) {
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const lastLogTime = useRef(0)
-  const [status, setStatus] = useState('Loading hand detection...')
+  const [status, setStatus] = useState('Loading handdetection...')
+   const [prediction, setPrediction] = useState('')
+const [confidence, setConfidence] = useState(0)
+const [recognizedText, setRecognizedText] = useState('')
   
   useEffect(() => {
     let stream
@@ -70,9 +73,37 @@ function HandDetection() {
   )
 
   if (Date.now() - lastLogTime.current > 1000) {
-    console.warn('Hand coordinates:', hands)
-    lastLogTime.current = Date.now()
+  fetch('http://127.0.0.1:5000/predict', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ hands })
+  })
+    .then(response => response.json())
+    .then(data => {
+  console.log('Prediction:', data)
+
+  if (data.error) {
+    console.error(data.error)
+    return
   }
+
+  setPrediction(data.label || '')
+if (data.label && onRecognize) {
+  onRecognize(prev =>
+    prev ? prev + ' ' + data.label.toUpperCase()
+         : data.label.toUpperCase()
+  )
+}
+  setConfidence(data.confidence || 0)
+})
+    .catch(error => {
+      console.error('Prediction error:', error)
+    })
+
+  lastLogTime.current = Date.now()
+}
 
                 results.landmarks.forEach(landmarks => {
                   landmarks.forEach(point => {
@@ -122,6 +153,12 @@ function HandDetection() {
         <canvas ref={canvasRef} className="landmark-canvas" />
       </div>
       <p>{status}</p>
+      {prediction && (
+  <div>
+    <h2>Recognized Sign: {prediction}</h2>
+    <p>Confidence: {(confidence * 100).toFixed(1)}%</p>
+  </div>
+)}
     </div>
   )
 }

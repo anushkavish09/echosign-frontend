@@ -4,6 +4,7 @@ import './App.css'
 
 function App() {
   const [mode, setMode] = useState('home')
+const [recognizedText, setRecognizedText] = useState('')
 
   return (
     <div className="app">
@@ -61,13 +62,17 @@ function App() {
 
               <div className="workspace-card">
                 <h2>
+                  <div className="input-area">
+  {recognizedText || 'Your recognized text will appear here.'}
+</div>
                   {mode === 'speech' ? 'Speech Input' : 'Camera Input'}
                 </h2>
 
                 <div className="input-area">
   {mode === 'speech'
     ? 'Your speech input will appear here.'
-    : <HandDetection />}
+    : <HandDetection 
+    onRecognize={setRecognizedText} />}
 </div>
               </div>
 
@@ -77,8 +82,8 @@ function App() {
                 </h2>
 
                 <div className="input-area">
-                  Your output will appear here.
-                </div>
+  {recognizedText || 'Your recognized text will appear here.'}
+</div>
               </div>
 
             </div>
