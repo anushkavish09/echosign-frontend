@@ -6,6 +6,80 @@ import './App.css'
 
 const API = 'http://127.0.0.1:5000'
 
+// AVAILABLE WORD SIGN VIDEOS
+const AVAILABLE_SPEECH_SIGNS = [
+  'GOOD MORNING',
+  'THANK YOU',
+  'BAD',
+  'CASH',
+  'FOOD',
+  'GOOD',
+  'HELLO',
+  'HELP',
+  'I',
+  'MEDICINE',
+  'NEED',
+  'NO',
+  'PAIN',
+  'PLEASE',
+  'SORRY',
+  'TIME',
+  'TOILET',
+  'WANT',
+  'WATER',
+  'YES'
+]
+
+// CONVERT TEXT INTO AVAILABLE SIGN WORDS
+const buildSpeechSequence = (text) => {
+  const cleanText = text
+    .toUpperCase()
+    .replace(/[.,!?;:()[\]{}"'“”‘’]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  const words = cleanText ? cleanText.split(' ') : []
+
+  const availableSigns = [...AVAILABLE_SPEECH_SIGNS].sort(
+    (a, b) => b.split(' ').length - a.split(' ').length
+  )
+
+  const matches = []
+  const unknown = []
+
+  let index = 0
+
+  while (index < words.length) {
+    let matchedSign = null
+
+    for (const sign of availableSigns) {
+      const signWords = sign.split(' ')
+      const currentWords = words.slice(
+        index,
+        index + signWords.length
+      )
+
+      if (
+        currentWords.length === signWords.length &&
+        currentWords.join(' ') === sign
+      ) {
+        matchedSign = sign
+        break
+      }
+    }
+
+    if (matchedSign) {
+      matches.push(matchedSign)
+      index += matchedSign.split(' ').length
+    } else {
+      unknown.push(words[index])
+      index++
+    }
+  }
+
+  return { matches, unknown }
+}
+
 function App() {
   const [mode, setMode] = useState('home')
 
@@ -27,6 +101,16 @@ function App() {
 
   const recognitionRef = useRef(null)
   const finalTranscriptRef = useRef('')
+
+  // SPEECH MODE SEQUENTIAL VIDEO STATES
+  const [speechSequence, setSpeechSequence] = useState([])
+  const [speechIndex, setSpeechIndex] = useState(0)
+  const [speechPlaying, setSpeechPlaying] = useState(false)
+  const [speechUnknown, setSpeechUnknown] = useState([])
+  const [speechCompleted, setSpeechCompleted] = useState(false)
+  const [speechVideoError, setSpeechVideoError] = useState('')
+
+  const speechVideoRef = useRef(null)
 
   // LOAD SIGN LIBRARY
   useEffect(() => {
@@ -180,6 +264,13 @@ function App() {
     setTranscript('')
     finalTranscriptRef.current = ''
     stopRecording()
+
+    setSpeechPlaying(false)
+    setSpeechSequence([])
+    setSpeechIndex(0)
+    setSpeechUnknown([])
+    setSpeechCompleted(false)
+    setSpeechVideoError('')
   }
 
   // SPEAK RECOGNIZED SIGN TEXT
@@ -198,10 +289,105 @@ function App() {
     setRecognizedText(result?.label || '')
   }
 
+  // START SEQUENTIAL SIGN PLAYBACK
+  const playSigns = () => {
+    const result = buildSpeechSequence(transcript)
+
+    setSpeechVideoError('')
+    setSpeechUnknown(result.unknown)
+    setSpeechIndex(0)
+    setSpeechSequence(result.matches)
+    setSpeechCompleted(false)
+
+    if (result.matches.length === 0) {
+      setSpeechPlaying(false)
+      alert('No matching sign videos found in your text.')
+      return
+    }
+
+    setSpeechPlaying(true)
+  }
+
+  // PAUSE AND RESUME PLAYBACK
+  const toggleSpeechPlayback = () => {
+    if (speechCompleted) {
+      setSpeechIndex(0)
+      setSpeechCompleted(false)
+      setSpeechPlaying(true)
+      return
+    }
+
+    setSpeechPlaying((previous) => !previous)
+  }
+
+  // STOP PLAYBACK
+  const stopSpeechPlayback = () => {
+    setSpeechPlaying(false)
+    setSpeechIndex(0)
+    setSpeechCompleted(false)
+
+    if (speechVideoRef.current) {
+      speechVideoRef.current.pause()
+      speechVideoRef.current.currentTime = 0
+    }
+  }
+
+  // AUTOMATICALLY PLAY OR PAUSE CURRENT VIDEO
+  useEffect(() => {
+    const video = speechVideoRef.current
+
+    if (!video || speechSequence.length === 0) return
+
+    if (speechPlaying) {
+      const playPromise = video.play()
+
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.log('Video playback could not start:', err)
+          setSpeechPlaying(false)
+          setSpeechVideoError(
+            'Video playback could not start. Please press Resume.'
+          )
+        })
+      }
+    } else {
+      video.pause()
+    }
+  }, [speechPlaying, speechIndex, speechSequence])
+
+  // PLAY NEXT VIDEO WHEN CURRENT VIDEO ENDS
+  const handleSpeechVideoEnded = () => {
+    if (speechIndex < speechSequence.length - 1) {
+      setSpeechIndex((previous) => previous + 1)
+    } else {
+      setSpeechPlaying(false)
+      setSpeechCompleted(true)
+    }
+  }
+
+  // SPEAK MODE VIDEO ERROR
+  const handleSpeechVideoError = () => {
+    setSpeechPlaying(false)
+    setSpeechVideoError(
+      `Could not load ${speechSequence[speechIndex]} video.`
+    )
+  }
+
   // RETURN HOME
   const goHome = () => {
     stopRecording()
     window.speechSynthesis.cancel()
+
+    if (speechVideoRef.current) {
+      speechVideoRef.current.pause()
+    }
+
+    setSpeechPlaying(false)
+    setSpeechSequence([])
+    setSpeechIndex(0)
+    setSpeechUnknown([])
+    setSpeechCompleted(false)
+    setSpeechVideoError('')
 
     setMode('home')
     setPrediction(null)
@@ -271,7 +457,9 @@ function App() {
                   Convert spoken or typed words into sign language.
                 </p>
 
-                <button onClick={() => setMode('speech')}>
+                <button
+                  onClick={() => setMode('speech')}
+                >
                   Start Speech Mode <span>→</span>
                 </button>
               </div>
@@ -382,6 +570,29 @@ function App() {
 
                 <h2>{selectedSign} Samples</h2>
 
+                {/* WORD SIGN VIDEO */}
+                <div className="sign-video-container">
+                  <h3>Learn This Sign</h3>
+
+                  <video
+                    className="sign-video"
+                    controls
+                    muted
+                    playsInline
+                    preload="metadata"
+                    style={{
+                      width: '100%',
+                      maxWidth: '400px',
+                      borderRadius: '12px',
+                      display: 'block',
+                      margin: '15px 0'
+                    }}
+                    src={`/signs/words/${encodeURIComponent(selectedSign)}/${encodeURIComponent(selectedSign)}.mp4`}
+                  >
+                    Your browser does not support video playback.
+                  </video>
+                </div>
+
                 {loading && <p>Loading samples...</p>}
 
                 {error && (
@@ -453,7 +664,7 @@ function App() {
             <div className="alphabet-section">
               <h2>A–Z Fingerspelling</h2>
 
-              <p>Learn alphabet signs with pictures.</p>
+              <p>Learn alphabet signs with pictures and videos.</p>
 
               <div className="alphabet-grid">
                 {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter) => (
@@ -467,6 +678,25 @@ function App() {
                         e.currentTarget.style.display = 'none'
                       }}
                     />
+
+                    {/* ALPHABET VIDEOS: G, I, J */}
+                    {['G', 'I', 'J'].includes(letter) && (
+                      <video
+                        controls
+                        muted
+                        playsInline
+                        preload="metadata"
+                        style={{
+                          width: '100%',
+                          maxWidth: '220px',
+                          borderRadius: '10px',
+                          marginTop: '10px'
+                        }}
+                        src={`/signs/alphabet/${letter}/${letter}.mp4`}
+                      >
+                        Your browser does not support video playback.
+                      </video>
+                    )}
                   </div>
                 ))}
               </div>
@@ -540,6 +770,14 @@ function App() {
                       Clear Text
                     </button>
 
+                    <button
+                      className="play-signs-btn"
+                      onClick={playSigns}
+                      disabled={!transcript.trim()}
+                    >
+                      ▶ Play Signs
+                    </button>
+
                   </div>
 
                 ) : (
@@ -566,9 +804,91 @@ function App() {
 
                 {mode === 'speech' ? (
 
-                  /* SIGN OUTPUT */
+                  /* SEQUENTIAL SIGN OUTPUT */
                   <div className="input-area speech-output-area">
-                    Your sign animation will appear here.
+
+                    {speechSequence.length === 0 ? (
+                      <p>
+                        Your sign animations will appear here.
+                        Type a sentence and click Play Signs.
+                      </p>
+                    ) : (
+
+                      <div className="speech-video-container">
+
+                        <h3>
+                          {speechSequence[speechIndex]}
+                        </h3>
+
+                        <p>
+                          Sign {speechIndex + 1} of {speechSequence.length}
+                        </p>
+
+                        <video
+                          ref={speechVideoRef}
+                          key={speechSequence[speechIndex]}
+                          src={`/signs/words/${encodeURIComponent(
+                            speechSequence[speechIndex]
+                          )}/${encodeURIComponent(
+                            speechSequence[speechIndex]
+                          )}.mp4`}
+                          autoPlay
+                          muted
+                          playsInline
+                          controls
+                          preload="auto"
+                          onEnded={handleSpeechVideoEnded}
+                          onError={handleSpeechVideoError}
+                          style={{
+                            width: '100%',
+                            maxWidth: '400px',
+                            borderRadius: '12px',
+                            display: 'block',
+                            margin: '15px auto'
+                          }}
+                        >
+                          Your browser does not support video playback.
+                        </video>
+
+                        {speechVideoError && (
+                          <p className="library-error">
+                            {speechVideoError}
+                          </p>
+                        )}
+
+                        <div className="speech-playback-controls">
+
+                          <button
+                            onClick={toggleSpeechPlayback}
+                            disabled={Boolean(speechVideoError)}
+                          >
+                            {speechCompleted
+                              ? 'Play Again'
+                              : speechPlaying
+                                ? 'Pause'
+                                : 'Resume'}
+                          </button>
+
+                          <button onClick={stopSpeechPlayback}>
+                            Stop
+                          </button>
+
+                        </div>
+
+                        {speechCompleted && (
+                          <p>All sign videos completed!</p>
+                        )}
+
+                      </div>
+                    )}
+
+                    {speechUnknown.length > 0 && (
+                      <p className="unsupported-signs">
+                        Videos not available for:{' '}
+                        {speechUnknown.join(', ')}
+                      </p>
+                    )}
+
                   </div>
 
                 ) : (
