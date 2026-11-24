@@ -1,4 +1,23 @@
 
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+/* ==============================
+   GLOBAL
+============================== */
+
+:root {
+  --teal: #0B514B;
+  --teal-dark: #083D39;
+  --teal-light: #E6F0EB;
+  --cream: #F6F3EC;
+  --white: #FFFFFF;
+  --lime: #A6C36F;
+  --text: #173D39;
+  --muted: #71817A;
+  --border: #E7E9DF;
+  --shadow: 0 10px 30px rgba(17, 57, 49, 0.06);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,173 +25,393 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #F5F1EA;
-  color: #0B4B46;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
 }
 
 .app {
   min-height: 100vh;
 }
 
+button,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+button:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 3px;
+}
+
+/* ==============================
+   NAVBAR
+============================== */
+
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 25px 70px;
-  background-color: #0B4B46;
+  height: 58px;
+  padding: 0 6%;
+  background: var(--teal);
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .navbar h2 {
-  font-size: 28px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 23px;
+  letter-spacing: -0.7px;
 }
 
 .navbar span {
-  font-size: 14px;
-  color: #DDE8D8;
+  font-size: 12px;
+  color: #D8E7DF;
 }
 
+/* ==============================
+   HOME PAGE
+============================== */
+
 .main-content {
+  min-height: calc(100vh - 72px);
+  padding: 60px 5%;
   text-align: center;
-  padding: 100px 30px;
 }
 
 .main-content h1 {
-  font-size: 42px;
-  margin-bottom: 20px;
+  font-family: 'Outfit', sans-serif;
+  color: var(--teal);
+  font-size: clamp(30px, 4vw, 43px);
+  letter-spacing: -1px;
 }
 
-.main-content > p {
-  font-size: 17px;
-  color: #64736C;
-  margin-bottom: 60px;
+.home-intro {
+  max-width: 760px;
+  margin: 0 auto 45px;
 }
+
+.home-tag {
+  display: inline-block;
+  color: #6D8D42;
+  background: #EAF0DF;
+  padding: 8px 17px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 18px;
+}
+
+.home-intro h1 {
+  margin-bottom: 12px;
+}
+
+.home-intro p {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* HOME CARDS */
 
 .mode-container {
+  max-width: 1100px;
+  margin: auto;
   display: flex;
   justify-content: center;
-  gap: 30px;
+  align-items: stretch;
   flex-wrap: wrap;
+  gap: 24px;
 }
 
 .mode-card {
-  background-color: white;
-  width: 350px;
-  padding: 40px 30px;
-  border-radius: 16px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+  width: 315px;
+  padding: 30px 26px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: 0.25s ease;
+}
+
+.mode-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 35px rgba(11, 81, 75, 0.11);
+  border-color: #D6E1C3;
+}
+
+.mode-icon {
+  width: 65px;
+  height: 65px;
+  background: var(--teal-light);
+  border-radius: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  margin-bottom: 18px;
+}
+
+.mode-label {
+  color: #78934F;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
 }
 
 .mode-card h2 {
-  font-size: 25px;
-  margin-bottom: 15px;
+  font-family: 'Outfit', sans-serif;
+  color: var(--teal);
+  font-size: 21px;
+  margin-bottom: 10px;
 }
 
 .mode-card p {
-  color: #64736C;
-  line-height: 1.6;
-  margin-bottom: 25px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 22px;
+  min-height: 48px;
+}
+
+.mode-card button,
+.camera-controls button,
+.recognized-actions button {
+  background: var(--teal);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .mode-card button {
-  background-color: #0B4B46;
-  color: white;
-  border: none;
-  padding: 13px 24px;
-  border-radius: 8px;
-  font-size: 15px;
-  cursor: pointer;
+  width: 100%;
+  padding: 13px 18px;
+  margin-top: auto;
 }
 
-.mode-card button:hover {
-  background-color: #A2B84B;
-  color: #0B3030;
+.mode-card button:hover,
+.recognized-actions button:hover:not(:disabled) {
+  background: var(--teal-dark);
+  transform: translateY(-2px);
 }
+
+.mode-card button span {
+  margin-left: 7px;
+}
+
+/* ==============================
+   WORKSPACE
+============================== */
 
 .workspace {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
 }
 
 .workspace > button {
   display: block;
   background: transparent;
-  color: #0B4B46;
-  border: 1px solid #0B4B46;
+  color: var(--teal);
+  border: 1px solid #B7CBC2;
   padding: 10px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 35px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 28px;
+}
+
+.workspace > button:hover {
+  background: var(--teal);
+  color: white;
 }
 
 .workspace > h1 {
-  font-size: 36px;
-  margin-bottom: 15px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 42px;
+  color: var(--teal);
+  margin-bottom: 8px;
 }
 
 .workspace > p {
-  color: #64736C;
-  margin-bottom: 40px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 30px;
 }
 
+/* TWO COLUMN CARDS */
+
 .workspace-container {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 26px;
 }
 
 .workspace-card {
+  min-width: 0;
+  padding: 26px;
   background: white;
-  padding: 30px;
-  border-radius: 15px;
-  width: 450px;
-  min-height: 280px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .workspace-card h2 {
-  font-size: 22px;
-  margin-bottom: 25px;
+  font-family: 'Outfit', sans-serif;
+  color: var(--teal);
+  font-size: 24px;
+  text-align: center;
 }
 
+/* ==============================
+   COMMON INPUT AREA
+============================== */
+
 .input-area {
-  background: #F5F1EA;
-  border: 1px dashed #A2B84B;
-  border-radius: 10px;
-  min-height: 150px;
-  padding: 25px;
+  width: 100%;
+  min-height: 180px;
+  padding: 22px;
+  background: #F8F6F0;
+  border: 1px solid #E1E7D5;
+  border-radius: 17px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 15px;
   text-align: center;
-  color: #64736C;
+  color: var(--muted);
   line-height: 1.6;
+}
+
+/* ==============================
+   SIGN MODE - COMPACT LAYOUT
+============================== */
+
+.sign-workspace {
+  max-width: 1350px;
+  padding: 28px 4% 45px;
+}
+
+.sign-workspace > button {
+  margin-bottom: 24px;
+}
+
+.sign-workspace > h1 {
+  font-size: 42px;
+  margin-bottom: 7px;
+}
+
+.sign-workspace > p {
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.sign-workspace .workspace-container {
+  max-width: 1280px;
+  gap: 28px;
+  margin-top: 0;
+  align-items: stretch;
+}
+
+.sign-workspace .workspace-card {
+  padding: 25px;
+  min-height: 0;
+  gap: 20px;
+}
+
+.sign-workspace .workspace-card h2 {
+  font-size: 25px;
+}
+
+/* INNER BOXES */
+
+.sign-workspace .camera-input-area,
+.sign-workspace .output-input-area {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  padding: 20px;
+  background: #F8F6F0;
+  border: 1px solid #E1E7D5;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==============================
+   CAMERA
+============================== */
+
+.camera-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
 }
 
 .video-wrapper {
   position: relative;
   width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 10;
+  background: #E9EEE8;
+  border: 1px solid #DCE5D9;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.video-wrapper.camera-active {
+  border: 2px solid var(--lime);
+  box-shadow: 0 0 0 3px rgba(166, 195, 111, 0.12);
 }
 
 .camera-feed {
   width: 100%;
-  border-radius: 10px;
+  height: 100%;
+  object-fit: cover;
   transform: scaleX(-1);
 }
 
 .landmark-canvas {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   transform: scaleX(-1);
   pointer-events: none;
 }
 
+<<<<<<< HEAD
 .library-page {
   width: 100%;
   max-width: 1100px;
@@ -318,12 +557,342 @@ body {
 
   .main-content {
     padding: 50px 15px;
+=======
+/* CAMERA PLACEHOLDER */
+
+.camera-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: #E9EEE8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.camera-placeholder-icon {
+  width: 65px;
+  height: 65px;
+  border-radius: 18px;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.camera-placeholder-icon span {
+  font-size: 30px;
+}
+
+.camera-placeholder h3 {
+  color: var(--teal);
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+}
+
+.camera-placeholder p {
+  font-size: 12px;
+}
+
+/* LIVE BADGE */
+
+.camera-live-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(8, 61, 57, 0.9);
+  color: white;
+  padding: 7px 11px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.live-indicator {
+  width: 8px;
+  height: 8px;
+  background: var(--lime);
+  border-radius: 50%;
+  animation: livePulse 1.5s infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(166, 195, 111, 0.6);
+  }
+
+  50% {
+    opacity: 0.65;
+    box-shadow: 0 0 0 5px rgba(166, 195, 111, 0);
+  }
+}
+
+.camera-frame-label {
+  position: absolute;
+  bottom: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  background: rgba(8, 61, 57, 0.85);
+  color: white;
+  padding: 6px 11px;
+  border-radius: 7px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* DETECTION STATUS */
+
+.detection-info {
+  width: 100%;
+  background: #F8F6F0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 15px 17px;
+  text-align: left;
+}
+
+.detection-info.hand-found {
+  background: #F0F5E9;
+  border-color: #C7D9A8;
+}
+
+.camera-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--teal);
+  font-size: 14px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  background: #A6A6A6;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.active {
+  background: #70AA58;
+  box-shadow: 0 0 0 4px rgba(112, 170, 88, 0.13);
+}
+
+.detection-hint {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 7px;
+  line-height: 1.5;
+}
+
+/* CAMERA BUTTONS */
+
+.camera-controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.camera-controls button {
+  min-width: 150px;
+  padding: 12px 20px;
+}
+
+.camera-controls button:hover {
+  background: var(--teal-dark);
+  transform: translateY(-2px);
+}
+
+.camera-controls .camera-stop-btn {
+  background: #A74747;
+}
+
+.camera-controls .camera-stop-btn:hover {
+  background: #873535;
+}
+
+/* ==============================
+   RECOGNIZED TEXT
+============================== */
+
+.recognized-output {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.recognized-message {
+  width: 100%;
+  min-height: 230px;
+  flex: 1;
+  padding: 22px;
+  background: white;
+  border: 1px solid #DCE5D4;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--teal);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.recognized-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.recognized-actions button {
+  padding: 12px 23px;
+}
+
+/* ==============================
+   SPEECH MODE
+============================== */
+
+.speech-input-area {
+  align-items: stretch;
+}
+
+.speech-input-area textarea {
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+  padding: 16px;
+  border: 1px solid #DCE4D7;
+  border-radius: 12px;
+  background: white;
+  color: var(--teal);
+  font-size: 15px;
+  line-height: 1.6;
+  outline: none;
+}
+
+.speech-input-area textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(11, 81, 75, 0.08);
+}
+
+.speech-input-area textarea::placeholder {
+  color: #9AA69E;
+}
+
+.record-btn {
+  background: var(--teal);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.record-btn:hover {
+  background: var(--teal-dark);
+}
+
+.record-btn.recording {
+  background: #B74747;
+}
+
+.record-btn.recording:hover {
+  background: #963535;
+}
+
+.clear-text-btn {
+  background: transparent;
+  color: var(--teal);
+  border: 1px solid #B7CBC2;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.clear-text-btn:hover {
+  background: var(--teal-light);
+}
+
+/* ==============================
+   QUICK COMMUNICATION
+============================== */
+
+.main-content.quick-mode {
+  padding: 30px 5% 50px;
+}
+
+.main-content.quick-mode .workspace {
+  max-width: 1200px;
+}
+
+/* ==============================
+   RESPONSIVE
+============================== */
+
+@media (max-width: 900px) {
+  .workspace-container {
+    gap: 20px;
+  }
+
+  .workspace-card {
+    padding: 22px;
+  }
+
+  .mode-container {
+    gap: 18px;
+  }
+
+  .mode-card {
+    width: 290px;
+  }
+
+  .sign-workspace .workspace-container {
+    grid-template-columns: 1fr;
+    max-width: 620px;
+  }
+}
+
+@media (max-width: 650px) {
+  .navbar {
+    height: 65px;
+    padding: 0 20px;
+  }
+
+  .navbar h2 {
+    font-size: 23px;
+  }
+
+  .navbar span {
+    font-size: 10px;
+  }
+
+  .main-content {
+    padding: 38px 17px;
+>>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
   }
 
   .main-content h1 {
     font-size: 30px;
   }
 
+<<<<<<< HEAD
   .workspace-card {
     width: 100%;
     padding: 20px;
@@ -341,5 +910,334 @@ body {
 
   .library-page {
     padding: 0 12px;
+=======
+  .home-intro {
+    margin-bottom: 32px;
+  }
+
+  .home-intro p {
+    font-size: 14px;
+  }
+
+  .mode-container {
+    gap: 16px;
+  }
+
+  .mode-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 26px 22px;
+  }
+
+  .workspace > button {
+    margin-bottom: 25px;
+  }
+
+  .workspace > h1 {
+    font-size: 33px;
+  }
+
+  .workspace > p {
+    font-size: 14px;
+    margin-bottom: 25px;
+  }
+
+  .workspace-container {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .workspace-card {
+    min-height: 0;
+    padding: 20px;
+    border-radius: 17px;
+  }
+
+  .workspace-card h2 {
+    font-size: 21px;
+  }
+
+  .input-area {
+    padding: 16px;
+  }
+
+  .recognized-message {
+    min-height: 150px;
+    font-size: 17px;
+  }
+
+  .main-content.quick-mode {
+    padding: 25px 12px 40px;
+  }
+
+  .sign-workspace {
+    padding: 25px 16px 40px;
+  }
+
+  .sign-workspace > h1 {
+    font-size: 34px;
+  }
+
+  .sign-workspace > p {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .sign-workspace .workspace-container {
+    gap: 18px;
+  }
+
+  .sign-workspace .workspace-card {
+    padding: 18px;
+  }
+
+  .sign-workspace .camera-input-area,
+  .sign-workspace .output-input-area {
+    padding: 15px;
+  }
+
+  .video-wrapper {
+    aspect-ratio: 4 / 3;
+  }
+
+  .camera-live-badge {
+    top: 9px;
+    left: 9px;
+  }
+
+  .camera-frame-label {
+    font-size: 9px;
+  }
+
+  .camera-placeholder h3 {
+    font-size: 16px;
+  }
+
+  .camera-controls button {
+    min-width: 135px;
+  }
+}
+
+@media (max-width: 380px) {
+  .navbar {
+    padding: 0 13px;
+  }
+
+  .navbar h2 {
+    font-size: 20px;
+  }
+
+  .navbar span {
+    font-size: 9px;
+  }
+
+  .main-content {
+    padding: 30px 12px;
+  }
+
+  .workspace-card {
+    padding: 16px;
+  }
+
+  .recognized-actions button {
+    padding: 10px 17px;
+  }
+}
+
+/* REMOVE EXTRA TOP SPACING IN SIGN MODE */
+
+main.main-content:has(.sign-workspace) {
+  padding-top: 20px;
+  padding-bottom: 35px;
+}
+
+.sign-workspace {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Back button closer to heading */
+.sign-workspace > .back-button {
+  margin-bottom: 12px;
+}
+
+/* Reduce heading spacing */
+.sign-workspace > h1 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 40px;
+}
+
+.sign-workspace > p {
+  margin-bottom: 24px;
+}
+
+/* Bring cards closer to heading */
+.sign-workspace .workspace-container {
+  margin-top: 0;
+}
+
+/* ==============================
+   SPEECH MODE - COMPACT LAYOUT
+============================== */
+
+/* Remove unnecessary top spacing */
+main.main-content:has(.speech-workspace) {
+  padding-top: 20px;
+  padding-bottom: 35px;
+}
+
+.speech-workspace {
+  padding-top: 0;
+}
+
+/* Back button */
+.speech-workspace > .back-button {
+  margin-bottom: 12px;
+}
+
+/* Heading */
+.speech-workspace > h1 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 40px;
+}
+
+.speech-workspace > p {
+  margin-bottom: 24px;
+}
+
+/* Cards layout */
+.speech-workspace .workspace-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 26px;
+}
+
+/* Main cards */
+.speech-workspace .workspace-card {
+  padding: 24px;
+  gap: 18px;
+  min-height: 0;
+  justify-content: flex-start;
+}
+
+.speech-workspace .workspace-card h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* Speech input */
+.speech-workspace .speech-input-area {
+  min-height: 0;
+  padding: 20px;
+  gap: 14px;
+}
+
+.speech-workspace .speech-input-area textarea {
+  min-height: 190px;
+  resize: vertical;
+}
+
+/* Recording and clear buttons */
+.speech-workspace .record-btn,
+.speech-workspace .clear-text-btn {
+  width: 100%;
+  max-width: 240px;
+  min-height: 44px;
+}
+
+/* Sign output */
+.speech-workspace .speech-output-area {
+  min-height: 260px;
+  flex: 1;
+  padding: 20px;
+  justify-content: center;
+  border-radius: 16px;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .speech-workspace .workspace-container {
+    grid-template-columns: 1fr;
+    max-width: 620px;
+  }
+}
+
+@media (max-width: 650px) {
+  main.main-content:has(.speech-workspace) {
+    padding: 20px 16px 35px;
+  }
+
+  .speech-workspace > h1 {
+    font-size: 34px;
+  }
+
+  .speech-workspace > p {
+    font-size: 14px;
+    margin-bottom: 22px;
+  }
+
+  .speech-workspace .workspace-container {
+    gap: 18px;
+  }
+
+  .speech-workspace .workspace-card {
+    padding: 18px;
+  }
+
+  .speech-workspace .speech-input-area {
+    padding: 15px;
+  }
+
+  .speech-workspace .speech-input-area textarea {
+    min-height: 150px;
+  }
+
+  .speech-workspace .speech-output-area {
+    min-height: 180px;
+  }
+}
+
+/* ==============================
+   QUICK COMMUNICATION - COMPACT
+============================== */
+
+/* Reduce top spacing */
+main.main-content.quick-mode {
+  padding: 20px 5% 35px;
+  min-height: calc(100vh - 58px);
+}
+
+/* Main workspace */
+.quick-mode .workspace {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* Back button */
+.quick-mode .workspace > button {
+  margin: 0 0 20px;
+  padding: 10px 18px;
+}
+
+/* Quick communication content */
+.quick-mode .workspace > *:not(button) {
+  max-width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 650px) {
+  main.main-content.quick-mode {
+    padding: 20px 16px 30px;
+  }
+
+  .quick-mode .workspace > button {
+    margin-bottom: 16px;
+>>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
   }
 }

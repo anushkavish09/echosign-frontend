@@ -1,0 +1,254 @@
+
+.quick-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 25px 40px;
+  color: #0B4B46;
+}
+
+.quick-heading {
+  text-align: center;
+  margin: 15px 0 28px;
+}
+
+.quick-tag {
+  display: inline-block;
+  color: #78933E;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.quick-heading h1 {
+  font-size: 38px;
+  margin: 0 0 12px;
+  color: #0B4B46;
+}
+
+.quick-heading p {
+  color: #718078;
+  font-size: 17px;
+}
+
+/* Phrase Cards */
+.phrase-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.phrase-card {
+  background: white;
+  border: 1px solid #eeeae2;
+  border-radius: 14px;
+  min-height: 145px;
+  padding: 18px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  cursor: pointer;
+  color: #0B4B46;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.phrase-card:hover {
+  transform: translateY(-4px);
+  border-color: #A2B84B;
+  box-shadow: 0 8px 22px rgba(11, 75, 70, 0.10);
+}
+
+.phrase-card.selected {
+  border: 2px solid #0B4B46;
+  background: #f0f5eb;
+}
+
+.phrase-icon {
+  font-size: 30px;
+}
+
+.phrase-category {
+  font-size: 11px;
+  color: #8b9b75;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.phrase-text {
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Emergency Cards */
+.phrase-card.emergency-card {
+  background: #fff8f5;
+  border: 1.5px solid #e6a18d;
+}
+
+.phrase-card.emergency-card .phrase-category {
+  color: #b65338;
+  font-weight: 700;
+}
+
+.phrase-card.emergency-card:hover {
+  border-color: #c65d3e;
+  background: #fff1eb;
+  box-shadow: 0 8px 22px rgba(198, 93, 62, 0.12);
+}
+
+.phrase-card.emergency-card.selected {
+  border: 2px solid #0B4B46;
+  background: #f0f5eb;
+}
+
+/* Custom Message and Output */
+.custom-message,
+.message-output {
+  background: white;
+  padding: 24px 30px;
+  border-radius: 20px;
+  margin-top: 25px;
+  margin-bottom: 22px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.035);
+}
+
+.custom-message h2,
+.message-output h2 {
+  font-size: 21px;
+  margin: 0 0 20px;
+}
+
+.custom-input {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-input input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid #d9dfc8;
+  border-radius: 9px;
+  background: #F5F1EA;
+  font-size: 15px;
+  outline: none;
+}
+
+.custom-input input:focus {
+  border-color: #0B4B46;
+}
+
+.custom-input button,
+.message-actions button {
+  border: none;
+  background: #0B4B46;
+  color: white;
+  padding: 13px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-input button:hover,
+.message-actions button:hover:not(:disabled) {
+  background: #17675e;
+  transform: translateY(-2px);
+}
+
+/* Message Display */
+.message-display {
+  min-height: 75px;
+  background: #F5F1EA;
+  border: 1px dashed #A2B84B;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0B4B46;
+}
+
+/* Action Buttons */
+.message-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.message-actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .phrase-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quick-heading h1 {
+    font-size: 29px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .quick-page {
+    padding: 0 15px 40px;
+  }
+
+  .phrase-grid {
+    gap: 12px;
+  }
+
+  .phrase-card {
+    min-height: 145px;
+    padding: 15px 8px;
+  }
+
+  .custom-input {
+    flex-direction: column;
+  }
+
+  .custom-input button {
+    width: 100%;
+  }
+
+  .message-actions button {
+    flex: 1;
+  }
+}
+/* Improved text contrast for accessibility */
+
+.quick-heading p {
+  color: #53645E;
+}
+
+.quick-tag {
+  color: #536F35;
+}
+
+.phrase-category {
+  color: #536B50;
+}
+
+.custom-input input::placeholder {
+  color: #626B66;
+  opacity: 1;
+}
+
+.message-display {
+  color: #0B4B46;
+}

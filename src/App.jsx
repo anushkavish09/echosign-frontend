@@ -1,12 +1,18 @@
 
 import HandDetection from './HandDetection'
+<<<<<<< HEAD
 import { useState, useEffect } from 'react'
+=======
+import QuickCommunication from './QuickCommunication'
+import { useState, useRef } from 'react'
+>>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
 import './App.css'
 
 const API = 'http://127.0.0.1:5000'
 
 function App() {
   const [mode, setMode] = useState('home')
+<<<<<<< HEAD
   const [signs, setSigns] = useState([])
   const [selectedSign, setSelectedSign] = useState(null)
   const [samples, setSamples] = useState([])
@@ -99,41 +105,171 @@ function App() {
   const goHome = () => {
     setMode('home')
     setPrediction(null)
+=======
+  const [transcript, setTranscript] = useState('')
+  const [recognizedText, setRecognizedText] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
+
+  const recognitionRef = useRef(null)
+  const finalTranscriptRef = useRef('')
+
+  // START SPEECH RECOGNITION
+  const startRecording = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition
+
+    if (!SpeechRecognition) {
+      alert('Speech recognition is not supported in this browser.')
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+
+    recognition.lang = 'en-IN'
+    recognition.continuous = true
+    recognition.interimResults = true
+
+    finalTranscriptRef.current = ''
+    setTranscript('')
+
+    recognition.onresult = (event) => {
+      let interimText = ''
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const text = event.results[i][0].transcript
+
+        if (event.results[i].isFinal) {
+          finalTranscriptRef.current += text + ' '
+        } else {
+          interimText += text
+        }
+      }
+
+      setTranscript(finalTranscriptRef.current + interimText)
+    }
+
+    recognition.onstart = () => setIsRecording(true)
+    recognition.onend = () => setIsRecording(false)
+
+    recognition.onerror = (event) => {
+      console.log('Speech recognition error:', event.error)
+      setIsRecording(false)
+    }
+
+    recognitionRef.current = recognition
+    recognition.start()
+  }
+
+  // STOP SPEECH RECOGNITION
+  const stopRecording = () => {
+    recognitionRef.current?.stop()
+  }
+
+  // CLEAR SPEECH TEXT
+  const clearText = () => {
+    setTranscript('')
+    finalTranscriptRef.current = ''
+    stopRecording()
+  }
+
+  // SPEAK RECOGNIZED TEXT
+  const speakText = () => {
+    if (!recognizedText) return
+
+    window.speechSynthesis.cancel()
+
+    const speech = new SpeechSynthesisUtterance(recognizedText)
+    window.speechSynthesis.speak(speech)
+>>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
   }
 
   return (
     <div className="app">
 
+      {/* NAVBAR */}
       <header className="navbar">
         <h2>EchoSign</h2>
         <span>Communication without barriers.</span>
       </header>
 
-      <main className="main-content">
+      <main className={`main-content ${mode === 'quick' ? 'quick-mode' : ''}`}>
 
+<<<<<<< HEAD
         {mode === 'home' && (
+=======
+        {/* HOME PAGE */}
+        {mode === 'home' ? (
+>>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
           <>
-            <h1>Every voice deserves to be heard.</h1>
-            <p>A simple way to connect through speech and sign language.</p>
+            <div className="home-intro">
+              <span className="home-tag">WELCOME TO ECHOSIGN</span>
+
+              <h1>Every voice deserves to be heard.</h1>
+
+              <p>
+                A simple way to connect through speech and sign language.
+              </p>
+            </div>
 
             <div className="mode-container">
 
+              {/* QUICK COMMUNICATION CARD */}
               <div className="mode-card">
-                <h2>Speech Mode</h2>
-                <p>Convert spoken words into text and signs.</p>
-                <button onClick={() => setMode('speech')}>
-                  Start Speech Mode
+                <div className="mode-icon">💬</div>
+
+                <span className="mode-label">INSTANT MESSAGES</span>
+
+                <h2>Quick Communication</h2>
+
+                <p>
+                  Communicate instantly using ready-made or custom messages.
+                </p>
+
+                <button onClick={() => setMode('quick')}>
+                  Get Started <span>→</span>
                 </button>
               </div>
 
+              {/* SPEECH MODE CARD */}
               <div className="mode-card">
+                <div className="mode-icon">🎙️</div>
+
+                <span className="mode-label">VOICE TO SIGN</span>
+
+                <h2>Speech Mode</h2>
+
+                <p>
+                  Convert spoken or typed words into sign language.
+                </p>
+
+                <button onClick={() => setMode('speech')}>
+                  Start Speech Mode <span>→</span>
+                </button>
+              </div>
+
+              {/* SIGN MODE CARD */}
+              <div className="mode-card">
+                <div className="mode-icon">🤟</div>
+
+                <span className="mode-label">SIGN TO TEXT</span>
+
                 <h2>Sign Mode</h2>
+<<<<<<< HEAD
                 <p>Communicate using sign language through your camera.</p>
                 <button onClick={() => {
                   setPrediction(null)
                   setMode('sign')
                 }}>
                   Start Sign Mode
+=======
+
+                <p>
+                  Communicate using hand gestures through your camera.
+                </p>
+
+                <button onClick={() => setMode('sign')}>
+                  Start Sign Mode <span>→</span>
+>>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
                 </button>
               </div>
 
@@ -147,6 +283,7 @@ function App() {
 
             </div>
           </>
+<<<<<<< HEAD
         )}
 
         {mode === 'library' && (
@@ -281,38 +418,116 @@ function App() {
           <div className="workspace">
 
             <button onClick={goHome}>
+=======
+
+        ) : mode === 'quick' ? (
+
+          /* QUICK COMMUNICATION */
+          <div className="workspace">
+            <button onClick={() => setMode('home')}>
+>>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
               ← Back to Home
             </button>
 
+            <QuickCommunication />
+          </div>
+
+        ) : (
+
+          /* SPEECH MODE AND SIGN MODE */
+          <div className={`workspace ${mode}-workspace`}>
+
+            {/* BACK BUTTON */}
+            <button
+              className="back-button"
+              onClick={() => {
+                stopRecording()
+                setMode('home')
+              }}
+            >
+              ← Back to Home
+            </button>
+
+            {/* PAGE HEADING */}
             <h1>
               {mode === 'speech' ? 'Speech Mode' : 'Sign Mode'}
             </h1>
 
             <p>
               {mode === 'speech'
-                ? 'Speak naturally and communicate through signs.'
+                ? 'Speak or type your message to communicate through signs.'
                 : 'Use hand gestures to communicate through text and speech.'}
             </p>
 
+            {/* TWO COLUMN LAYOUT */}
             <div className="workspace-container">
 
-              <div className="workspace-card">
+              {/* FIRST CARD: INPUT */}
+              <div className={`workspace-card ${mode === 'sign' ? 'camera-card' : 'speech-card'}`}>
+
                 <h2>
                   {mode === 'speech' ? 'Speech Input' : 'Camera Input'}
                 </h2>
 
+<<<<<<< HEAD
                 <div className="input-area">
                   {mode === 'speech'
                     ? 'Your speech input will appear here.'
                     : <HandDetection onPrediction={setPrediction} />}
                 </div>
+=======
+                {mode === 'speech' ? (
+
+                  /* SPEECH INPUT */
+                  <div className="input-area speech-input-area">
+
+                    <textarea
+                      placeholder="Speak or type your message here..."
+                      value={transcript}
+                      onChange={(e) => {
+                        setTranscript(e.target.value)
+                        finalTranscriptRef.current = e.target.value
+                      }}
+                    />
+
+                    <button
+                      className={`record-btn ${isRecording ? 'recording' : ''}`}
+                      onClick={isRecording ? stopRecording : startRecording}
+                    >
+                      {isRecording
+                        ? 'Stop Recording'
+                        : '🎙️ Start Recording'}
+                    </button>
+
+                    <button
+                      className="clear-text-btn"
+                      onClick={clearText}
+                    >
+                      Clear Text
+                    </button>
+
+                  </div>
+
+                ) : (
+
+                  /* CAMERA INPUT */
+                  <div className="input-area camera-input-area">
+                    <HandDetection />
+                  </div>
+
+                )}
+
+>>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
               </div>
 
-              <div className="workspace-card">
+              {/* SECOND CARD: OUTPUT */}
+              <div className={`workspace-card ${mode === 'sign' ? 'output-card' : 'speech-output-card'}`}>
+
                 <h2>
                   {mode === 'speech' ? 'Sign Output' : 'Recognized Text'}
                 </h2>
 
+<<<<<<< HEAD
                 <div className="input-area">
                   {mode === 'speech' ? (
                     'Your output will appear here.'
@@ -329,6 +544,51 @@ function App() {
                     'Waiting for sign recognition...'
                   )}
                 </div>
+=======
+                {mode === 'speech' ? (
+
+                  /* SIGN OUTPUT */
+                  <div className="input-area speech-output-area">
+                    Your sign animation will appear here.
+                  </div>
+
+                ) : (
+
+                  /* RECOGNIZED TEXT OUTPUT */
+                  <div className="input-area output-input-area">
+
+                    <div className="recognized-output">
+
+                      <div className="recognized-message">
+                        {recognizedText ||
+                          'Your recognized text will appear here.'}
+                      </div>
+
+                      <div className="recognized-actions">
+
+                        <button
+                          disabled={!recognizedText}
+                          onClick={speakText}
+                        >
+                          🔊 Speak
+                        </button>
+
+                        <button
+                          disabled={!recognizedText}
+                          onClick={() => setRecognizedText('')}
+                        >
+                          Clear
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                )}
+
+>>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
               </div>
 
             </div>
