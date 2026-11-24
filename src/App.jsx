@@ -1,26 +1,34 @@
 
+import { useState, useEffect, useRef } from 'react'
 import HandDetection from './HandDetection'
-<<<<<<< HEAD
-import { useState, useEffect } from 'react'
-=======
 import QuickCommunication from './QuickCommunication'
-import { useState, useRef } from 'react'
->>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
 import './App.css'
 
 const API = 'http://127.0.0.1:5000'
 
 function App() {
   const [mode, setMode] = useState('home')
-<<<<<<< HEAD
+
+  // SIGN LIBRARY STATES
   const [signs, setSigns] = useState([])
   const [selectedSign, setSelectedSign] = useState(null)
   const [samples, setSamples] = useState([])
   const [selectedSample, setSelectedSample] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [prediction, setPrediction] = useState(null)
 
+  // SIGN PREDICTION STATE
+  const [prediction, setPrediction] = useState(null)
+  const [recognizedText, setRecognizedText] = useState('')
+
+  // SPEECH RECOGNITION STATES
+  const [transcript, setTranscript] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
+
+  const recognitionRef = useRef(null)
+  const finalTranscriptRef = useRef('')
+
+  // LOAD SIGN LIBRARY
   useEffect(() => {
     if (mode !== 'library') return
 
@@ -30,12 +38,17 @@ function App() {
 
       try {
         const response = await fetch(`${API}/library/signs`)
-        if (!response.ok) throw new Error('Could not load signs')
+
+        if (!response.ok) {
+          throw new Error('Could not load signs')
+        }
 
         const data = await response.json()
         setSigns(data.signs || data.data || [])
       } catch (err) {
-        setError('Backend connect nahi ho raha. Please check Backend server.')
+        setError(
+          'Backend connect nahi ho raha. Please check Backend server.'
+        )
       } finally {
         setLoading(false)
       }
@@ -44,6 +57,7 @@ function App() {
     loadSigns()
   }, [mode])
 
+  // OPEN A SIGN
   const openSign = async (sign) => {
     const name = typeof sign === 'string'
       ? sign
@@ -60,7 +74,9 @@ function App() {
         `${API}/library/signs/${encodeURIComponent(name)}`
       )
 
-      if (!response.ok) throw new Error('Could not load samples')
+      if (!response.ok) {
+        throw new Error('Could not load samples')
+      }
 
       const data = await response.json()
       setSamples(data.samples || data.data || [])
@@ -71,6 +87,7 @@ function App() {
     }
   }
 
+  // OPEN A SAMPLE
   const openSample = async (sample) => {
     const id = sample.sample_id || sample.id
 
@@ -82,7 +99,9 @@ function App() {
         `${API}/library/sample/${encodeURIComponent(id)}`
       )
 
-      if (!response.ok) throw new Error('Could not load sample')
+      if (!response.ok) {
+        throw new Error('Could not load sample')
+      }
 
       const data = await response.json()
       setSelectedSample(data)
@@ -93,6 +112,7 @@ function App() {
     }
   }
 
+  // LIBRARY HELPERS
   const getSignName = (sign) =>
     sign.name || sign.sign || sign.label || 'Unknown'
 
@@ -101,17 +121,6 @@ function App() {
 
   const getFeatures = (sample) =>
     sample.features || sample.landmarks || sample.values || []
-
-  const goHome = () => {
-    setMode('home')
-    setPrediction(null)
-=======
-  const [transcript, setTranscript] = useState('')
-  const [recognizedText, setRecognizedText] = useState('')
-  const [isRecording, setIsRecording] = useState(false)
-
-  const recognitionRef = useRef(null)
-  const finalTranscriptRef = useRef('')
 
   // START SPEECH RECOGNITION
   const startRecording = () => {
@@ -149,6 +158,7 @@ function App() {
     }
 
     recognition.onstart = () => setIsRecording(true)
+
     recognition.onend = () => setIsRecording(false)
 
     recognition.onerror = (event) => {
@@ -172,7 +182,7 @@ function App() {
     stopRecording()
   }
 
-  // SPEAK RECOGNIZED TEXT
+  // SPEAK RECOGNIZED SIGN TEXT
   const speakText = () => {
     if (!recognizedText) return
 
@@ -180,8 +190,31 @@ function App() {
 
     const speech = new SpeechSynthesisUtterance(recognizedText)
     window.speechSynthesis.speak(speech)
->>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
   }
+
+  // HANDLE SIGN PREDICTION
+  const handlePrediction = (result) => {
+    setPrediction(result)
+    setRecognizedText(result?.label || '')
+  }
+
+  // RETURN HOME
+  const goHome = () => {
+    stopRecording()
+    window.speechSynthesis.cancel()
+
+    setMode('home')
+    setPrediction(null)
+    setRecognizedText('')
+  }
+
+  // CLEANUP SPEECH RECOGNITION
+  useEffect(() => {
+    return () => {
+      recognitionRef.current?.stop()
+      window.speechSynthesis?.cancel()
+    }
+  }, [])
 
   return (
     <div className="app">
@@ -194,12 +227,8 @@ function App() {
 
       <main className={`main-content ${mode === 'quick' ? 'quick-mode' : ''}`}>
 
-<<<<<<< HEAD
-        {mode === 'home' && (
-=======
         {/* HOME PAGE */}
         {mode === 'home' ? (
->>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
           <>
             <div className="home-intro">
               <span className="home-tag">WELCOME TO ECHOSIGN</span>
@@ -213,7 +242,7 @@ function App() {
 
             <div className="mode-container">
 
-              {/* QUICK COMMUNICATION CARD */}
+              {/* QUICK COMMUNICATION */}
               <div className="mode-card">
                 <div className="mode-icon">💬</div>
 
@@ -230,7 +259,7 @@ function App() {
                 </button>
               </div>
 
-              {/* SPEECH MODE CARD */}
+              {/* SPEECH MODE */}
               <div className="mode-card">
                 <div className="mode-icon">🎙️</div>
 
@@ -247,35 +276,37 @@ function App() {
                 </button>
               </div>
 
-              {/* SIGN MODE CARD */}
+              {/* SIGN MODE */}
               <div className="mode-card">
                 <div className="mode-icon">🤟</div>
 
                 <span className="mode-label">SIGN TO TEXT</span>
 
                 <h2>Sign Mode</h2>
-<<<<<<< HEAD
-                <p>Communicate using sign language through your camera.</p>
-                <button onClick={() => {
-                  setPrediction(null)
-                  setMode('sign')
-                }}>
-                  Start Sign Mode
-=======
 
                 <p>
                   Communicate using hand gestures through your camera.
                 </p>
 
-                <button onClick={() => setMode('sign')}>
+                <button
+                  onClick={() => {
+                    setPrediction(null)
+                    setRecognizedText('')
+                    setMode('sign')
+                  }}
+                >
                   Start Sign Mode <span>→</span>
->>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
                 </button>
               </div>
 
+              {/* SIGN LIBRARY */}
               <div className="mode-card">
                 <h2>Sign Library</h2>
-                <p>Explore signs, recorded samples and their features.</p>
+
+                <p>
+                  Explore signs, recorded samples and their features.
+                </p>
+
                 <button onClick={() => setMode('library')}>
                   Open Sign Library
                 </button>
@@ -283,10 +314,21 @@ function App() {
 
             </div>
           </>
-<<<<<<< HEAD
-        )}
 
-        {mode === 'library' && (
+        ) : mode === 'quick' ? (
+
+          /* QUICK COMMUNICATION */
+          <div className="workspace">
+            <button className="back-button" onClick={goHome}>
+              ← Back to Home
+            </button>
+
+            <QuickCommunication />
+          </div>
+
+        ) : mode === 'library' ? (
+
+          /* SIGN LIBRARY */
           <div className="library-page">
 
             <button className="back-button" onClick={goHome}>
@@ -294,6 +336,7 @@ function App() {
             </button>
 
             <h1>EchoSign Library</h1>
+
             <p>Explore recorded signs and their samples.</p>
 
             {!selectedSign && !selectedSample && (
@@ -301,15 +344,20 @@ function App() {
                 <h2>All Signs</h2>
 
                 {loading && <p>Loading signs...</p>}
-                {error && <p className="library-error">{error}</p>}
+
+                {error && (
+                  <p className="library-error">{error}</p>
+                )}
 
                 <div className="library-grid">
                   {signs.map((sign, index) => (
                     <div className="library-card" key={index}>
                       <h3>{getSignName(sign)}</h3>
+
                       <p>
                         Samples: {sign.sample_count ?? sign.count ?? 0}
                       </p>
+
                       <button onClick={() => openSign(sign)}>
                         View Samples
                       </button>
@@ -321,24 +369,32 @@ function App() {
 
             {selectedSign && !selectedSample && (
               <>
-                <button className="back-button" onClick={() => {
-                  setSelectedSign(null)
-                  setSamples([])
-                  setError('')
-                }}>
+                <button
+                  className="back-button"
+                  onClick={() => {
+                    setSelectedSign(null)
+                    setSamples([])
+                    setError('')
+                  }}
+                >
                   ← Back to All Signs
                 </button>
 
                 <h2>{selectedSign} Samples</h2>
 
                 {loading && <p>Loading samples...</p>}
-                {error && <p className="library-error">{error}</p>}
+
+                {error && (
+                  <p className="library-error">{error}</p>
+                )}
 
                 <div className="library-grid">
                   {samples.map((sample, index) => (
                     <div className="library-card" key={index}>
                       <h3>{getSampleId(sample)}</h3>
+
                       <p>Recorded sample</p>
+
                       <button onClick={() => openSample(sample)}>
                         View Features
                       </button>
@@ -350,10 +406,13 @@ function App() {
 
             {selectedSample && (
               <>
-                <button className="back-button" onClick={() => {
-                  setSelectedSample(null)
-                  setError('')
-                }}>
+                <button
+                  className="back-button"
+                  onClick={() => {
+                    setSelectedSample(null)
+                    setError('')
+                  }}
+                >
                   ← Back to Samples
                 </button>
 
@@ -384,21 +443,23 @@ function App() {
                   )}
                 </div>
 
-                {getFeatures(selectedSample).length === 0 &&
-                  Object.keys(getFeatures(selectedSample)).length === 0 &&
+                {Object.keys(getFeatures(selectedSample)).length === 0 && (
                   <p>No feature data found.</p>
-                }
+                )}
               </>
             )}
 
+            {/* A-Z FINGERSPELLING */}
             <div className="alphabet-section">
               <h2>A–Z Fingerspelling</h2>
+
               <p>Learn alphabet signs with pictures.</p>
 
               <div className="alphabet-grid">
                 {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter) => (
                   <div className="alphabet-card" key={letter}>
                     <h3>{letter}</h3>
+
                     <img
                       src={`/signs/alphabet/${letter}/${letter}.jpg`}
                       alt={`Sign language letter ${letter}`}
@@ -412,43 +473,16 @@ function App() {
             </div>
 
           </div>
-        )}
-
-        {(mode === 'speech' || mode === 'sign') && (
-          <div className="workspace">
-
-            <button onClick={goHome}>
-=======
-
-        ) : mode === 'quick' ? (
-
-          /* QUICK COMMUNICATION */
-          <div className="workspace">
-            <button onClick={() => setMode('home')}>
->>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
-              ← Back to Home
-            </button>
-
-            <QuickCommunication />
-          </div>
 
         ) : (
 
           /* SPEECH MODE AND SIGN MODE */
           <div className={`workspace ${mode}-workspace`}>
 
-            {/* BACK BUTTON */}
-            <button
-              className="back-button"
-              onClick={() => {
-                stopRecording()
-                setMode('home')
-              }}
-            >
+            <button className="back-button" onClick={goHome}>
               ← Back to Home
             </button>
 
-            {/* PAGE HEADING */}
             <h1>
               {mode === 'speech' ? 'Speech Mode' : 'Sign Mode'}
             </h1>
@@ -459,23 +493,19 @@ function App() {
                 : 'Use hand gestures to communicate through text and speech.'}
             </p>
 
-            {/* TWO COLUMN LAYOUT */}
             <div className="workspace-container">
 
-              {/* FIRST CARD: INPUT */}
-              <div className={`workspace-card ${mode === 'sign' ? 'camera-card' : 'speech-card'}`}>
+              {/* INPUT CARD */}
+              <div
+                className={`workspace-card ${
+                  mode === 'sign' ? 'camera-card' : 'speech-card'
+                }`}
+              >
 
                 <h2>
                   {mode === 'speech' ? 'Speech Input' : 'Camera Input'}
                 </h2>
 
-<<<<<<< HEAD
-                <div className="input-area">
-                  {mode === 'speech'
-                    ? 'Your speech input will appear here.'
-                    : <HandDetection onPrediction={setPrediction} />}
-                </div>
-=======
                 {mode === 'speech' ? (
 
                   /* SPEECH INPUT */
@@ -491,8 +521,12 @@ function App() {
                     />
 
                     <button
-                      className={`record-btn ${isRecording ? 'recording' : ''}`}
-                      onClick={isRecording ? stopRecording : startRecording}
+                      className={`record-btn ${
+                        isRecording ? 'recording' : ''
+                      }`}
+                      onClick={
+                        isRecording ? stopRecording : startRecording
+                      }
                     >
                       {isRecording
                         ? 'Stop Recording'
@@ -512,39 +546,24 @@ function App() {
 
                   /* CAMERA INPUT */
                   <div className="input-area camera-input-area">
-                    <HandDetection />
+                    <HandDetection onPrediction={handlePrediction} />
                   </div>
 
                 )}
 
->>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
               </div>
 
-              {/* SECOND CARD: OUTPUT */}
-              <div className={`workspace-card ${mode === 'sign' ? 'output-card' : 'speech-output-card'}`}>
+              {/* OUTPUT CARD */}
+              <div
+                className={`workspace-card ${
+                  mode === 'sign' ? 'output-card' : 'speech-output-card'
+                }`}
+              >
 
                 <h2>
                   {mode === 'speech' ? 'Sign Output' : 'Recognized Text'}
                 </h2>
 
-<<<<<<< HEAD
-                <div className="input-area">
-                  {mode === 'speech' ? (
-                    'Your output will appear here.'
-                  ) : prediction?.label ? (
-                    <>
-                      <h2>{prediction.label}</h2>
-                      <p>
-                        Confidence: {
-                          (prediction.confidence * 100).toFixed(1)
-                        }%
-                      </p>
-                    </>
-                  ) : (
-                    'Waiting for sign recognition...'
-                  )}
-                </div>
-=======
                 {mode === 'speech' ? (
 
                   /* SIGN OUTPUT */
@@ -554,7 +573,7 @@ function App() {
 
                 ) : (
 
-                  /* RECOGNIZED TEXT OUTPUT */
+                  /* SIGN RECOGNITION OUTPUT */
                   <div className="input-area output-input-area">
 
                     <div className="recognized-output">
@@ -563,6 +582,13 @@ function App() {
                         {recognizedText ||
                           'Your recognized text will appear here.'}
                       </div>
+
+                      {prediction?.label && (
+                        <p>
+                          Confidence:{' '}
+                          {(prediction.confidence * 100).toFixed(1)}%
+                        </p>
+                      )}
 
                       <div className="recognized-actions">
 
@@ -575,7 +601,10 @@ function App() {
 
                         <button
                           disabled={!recognizedText}
-                          onClick={() => setRecognizedText('')}
+                          onClick={() => {
+                            setRecognizedText('')
+                            setPrediction(null)
+                          }}
                         >
                           Clear
                         </button>
@@ -588,7 +617,6 @@ function App() {
 
                 )}
 
->>>>>>> 417cfd7 (Added Quick Communication feature and updated UI)
               </div>
 
             </div>
