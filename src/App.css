@@ -1,0 +1,276 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #F5F1EA;
+  color: #0B4B46;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 70px;
+  background-color: #0B4B46;
+  color: white;
+}
+
+.navbar h2 {
+  font-size: 28px;
+}
+
+.navbar span {
+  font-size: 14px;
+  color: #DDE8D8;
+}
+
+.main-content {
+  text-align: center;
+  padding: 100px 30px;
+}
+
+.main-content h1 {
+  font-size: 42px;
+  margin-bottom: 20px;
+}
+
+.main-content > p {
+  font-size: 17px;
+  color: #64736C;
+  margin-bottom: 60px;
+}
+
+.mode-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.mode-card {
+  background-color: white;
+  width: 350px;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+}
+
+.mode-card h2 {
+  font-size: 25px;
+  margin-bottom: 15px;
+}
+
+.mode-card p {
+  color: #64736C;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.mode-card button {
+  background-color: #0B4B46;
+  color: white;
+  border: none;
+  padding: 13px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.mode-card button:hover {
+  background-color: #A2B84B;
+  color: #0B3030;
+}
+
+.workspace {
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.workspace > button {
+  display: block;
+  background: transparent;
+  color: #0B4B46;
+  border: 1px solid #0B4B46;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 35px;
+}
+
+.workspace > h1 {
+  font-size: 36px;
+  margin-bottom: 15px;
+}
+
+.workspace > p {
+  color: #64736C;
+  margin-bottom: 40px;
+}
+
+.workspace-container {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.workspace-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 450px;
+  min-height: 280px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.workspace-card h2 {
+  font-size: 22px;
+  margin-bottom: 25px;
+}
+
+.input-area {
+  background: #F5F1EA;
+  border: 1px dashed #A2B84B;
+  border-radius: 10px;
+  min-height: 150px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #64736C;
+  line-height: 1.6;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.camera-feed {
+  width: 100%;
+  border-radius: 10px;
+  transform: scaleX(-1);
+}
+
+.landmark-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+.library-page {
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+  text-align: left;
+}
+
+.library-page > h1,
+.library-page > h2 {
+  text-align: center;
+  margin: 25px 0;
+}
+
+.library-page > p {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #64736C;
+}
+
+.back-button {
+  background: transparent;
+  border: 1px solid #0B4B46;
+  color: #0B4B46;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 15px 0;
+}
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 20px;
+  margin: 25px 0;
+}
+
+.library-card {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+}
+
+.library-card h3 {
+  margin-bottom: 12px;
+}
+
+.library-card p {
+  color: #64736C;
+  margin-bottom: 18px;
+}
+
+.library-card button {
+  background: #0B4B46;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.library-card button:hover {
+  background: #A2B84B;
+  color: #0B3030;
+}
+
+.library-error {
+  color: #b42318;
+  text-align: center;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.feature-item {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-wrap: anywhere;
+}
+
+.alphabet-section {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.alphabet-placeholder {
+  background: white;
+  padding: 45px;
+  border: 2px dashed #A2B84B;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
