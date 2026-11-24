@@ -266,11 +266,80 @@ body {
   text-align: center;
 }
 
-.alphabet-placeholder {
-  background: white;
-  padding: 45px;
-  border: 2px dashed #A2B84B;
-  border-radius: 12px;
-  margin-top: 20px;
+.alphabet-section h2 {
+  margin-bottom: 12px;
 }
 
+.alphabet-section p {
+  color: #64736C;
+  margin-bottom: 25px;
+}
+
+/* Alphabet Images - Small Cards */
+
+.alphabet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 18px;
+  margin-top: 25px;
+}
+
+.alphabet-card {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.alphabet-card h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #0B4B46;
+}
+
+.alphabet-card img {
+  width: 100px;
+  height: 120px;
+  object-fit: contain;
+  display: block;
+  margin: 10px auto;
+  border-radius: 8px;
+}
+
+/* Mobile Responsive */
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 18px 20px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .main-content {
+    padding: 50px 15px;
+  }
+
+  .main-content h1 {
+    font-size: 30px;
+  }
+
+  .workspace-card {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .alphabet-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .alphabet-card img {
+    width: 85px;
+    height: 105px;
+  }
+
+  .library-page {
+    padding: 0 12px;
+  }
+}

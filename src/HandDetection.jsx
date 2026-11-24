@@ -2,17 +2,59 @@
 import { useEffect, useRef, useState } from 'react'
 import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision'
 
-function HandDetection() {
+const API = 'http://127.0.0.1:5000'
+
+function HandDetection({ onPrediction }) {
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
-  const lastLogTime = useRef(0)
+  const lastRequestTime = useRef(0)
+  const requestInProgress = useRef(false)
+
   const [status, setStatus] = useState('Loading hand detection...')
-  
+
   useEffect(() => {
     let stream
     let handLandmarker
     let animationId
     let active = true
+
+    async function sendPrediction(hands) {
+      if (requestInProgress.current) return
+
+      requestInProgress.current = true
+
+      try {
+        const response = await fetch(`${API}/predict`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ hands }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Prediction failed')
+        }
+
+        if (active) {
+          onPrediction?.({
+            label: data.label,
+            confidence: data.confidence,
+          })
+        }
+      } catch (error) {
+        console.error('Prediction error:', error)
+
+        if (active) {
+          setStatus('Backend prediction failed. Check server.')
+          onPrediction?.(null)
+        }
+      } finally {
+        requestInProgress.current = false
+      }
+    }
 
     async function startDetection() {
       try {
@@ -22,15 +64,16 @@ function HandDetection() {
 
         handLandmarker = await HandLandmarker.createFromOptions(vision, {
           baseOptions: {
-            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
-            delegate: 'GPU'
+            modelAssetPath:
+              'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
+            delegate: 'GPU',
           },
           runningMode: 'VIDEO',
-          numHands: 2
+          numHands: 2,
         })
 
         stream = await navigator.mediaDevices.getUserMedia({
-          video: true
+          video: true,
         })
 
         if (!active) {
@@ -43,6 +86,7 @@ function HandDetection() {
 
         videoRef.current.onloadeddata = () => {
           if (!active) return
+
           setStatus('Show your hand to the camera')
 
           function detect() {
@@ -60,19 +104,15 @@ function HandDetection() {
               const ctx = canvas.getContext('2d')
               canvas.width = video.videoWidth
               canvas.height = video.videoHeight
+
               ctx.clearRect(0, 0, canvas.width, canvas.height)
 
               if (results.landmarks.length > 0) {
-  setStatus(`${results.landmarks.length} hand(s) detected`)
+                setStatus(`${results.landmarks.length} hand(s) detected`)
 
-  const hands = results.landmarks.map(hand =>
-    hand.map(point => [point.x, point.y, point.z])
-  )
-
-  if (Date.now() - lastLogTime.current > 1000) {
-    console.warn('Hand coordinates:', hands)
-    lastLogTime.current = Date.now()
-  }
+                const hands = results.landmarks.map(hand =>
+                  hand.map(point => [point.x, point.y, point.z])
+                )
 
                 results.landmarks.forEach(landmarks => {
                   landmarks.forEach(point => {
@@ -88,8 +128,17 @@ function HandDetection() {
                     ctx.fill()
                   })
                 })
+
+                if (
+                  Date.now() - lastRequestTime.current >= 500 &&
+                  !requestInProgress.current
+                ) {
+                  lastRequestTime.current = Date.now()
+                  sendPrediction(hands)
+                }
               } else {
                 setStatus('No hand detected')
+                onPrediction?.(null)
               }
             }
 
@@ -98,7 +147,6 @@ function HandDetection() {
 
           detect()
         }
-
       } catch (error) {
         console.error(error)
         setStatus('Could not start hand detection. Check camera and internet.')
@@ -110,10 +158,16 @@ function HandDetection() {
     return () => {
       active = false
       cancelAnimationFrame(animationId)
-      if (stream) stream.getTracks().forEach(track => track.stop())
-      if (handLandmarker) handLandmarker.close()
+
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop())
+      }
+
+      if (handLandmarker) {
+        handLandmarker.close()
+      }
     }
-  }, [])
+  }, [onPrediction])
 
   return (
     <div className="camera-container">
@@ -121,6 +175,7 @@ function HandDetection() {
         <video ref={videoRef} autoPlay playsInline className="camera-feed" />
         <canvas ref={canvasRef} className="landmark-canvas" />
       </div>
+
       <p>{status}</p>
     </div>
   )

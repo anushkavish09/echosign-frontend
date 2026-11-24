@@ -13,6 +13,7 @@ function App() {
   const [selectedSample, setSelectedSample] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [prediction, setPrediction] = useState(null)
 
   useEffect(() => {
     if (mode !== 'library') return
@@ -95,8 +96,14 @@ function App() {
   const getFeatures = (sample) =>
     sample.features || sample.landmarks || sample.values || []
 
+  const goHome = () => {
+    setMode('home')
+    setPrediction(null)
+  }
+
   return (
     <div className="app">
+
       <header className="navbar">
         <h2>EchoSign</h2>
         <span>Communication without barriers.</span>
@@ -122,7 +129,10 @@ function App() {
               <div className="mode-card">
                 <h2>Sign Mode</h2>
                 <p>Communicate using sign language through your camera.</p>
-                <button onClick={() => setMode('sign')}>
+                <button onClick={() => {
+                  setPrediction(null)
+                  setMode('sign')
+                }}>
                   Start Sign Mode
                 </button>
               </div>
@@ -142,11 +152,7 @@ function App() {
         {mode === 'library' && (
           <div className="library-page">
 
-            <button className="back-button" onClick={() => {
-              setMode('home')
-              setSelectedSign(null)
-              setSelectedSample(null)
-            }}>
+            <button className="back-button" onClick={goHome}>
               ← Back to Home
             </button>
 
@@ -219,11 +225,13 @@ function App() {
                 <p>
                   Sample ID: {selectedSample.sample_id || selectedSample.id}
                 </p>
+
                 <p>
                   Sign: {selectedSample.label || selectedSample.sign}
                 </p>
+
                 <p>
-                  Source: {selectedSample.source || 'CSV'}
+                  Source: {selectedSample.source_file || 'CSV'}
                 </p>
 
                 <h3>126 Numerical Features</h3>
@@ -251,7 +259,7 @@ function App() {
               <p>Learn alphabet signs with pictures.</p>
 
               <div className="alphabet-grid">
-                {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((letter) => (
+                {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter) => (
                   <div className="alphabet-card" key={letter}>
                     <h3>{letter}</h3>
                     <img
@@ -272,7 +280,7 @@ function App() {
         {(mode === 'speech' || mode === 'sign') && (
           <div className="workspace">
 
-            <button onClick={() => setMode('home')}>
+            <button onClick={goHome}>
               ← Back to Home
             </button>
 
@@ -296,7 +304,7 @@ function App() {
                 <div className="input-area">
                   {mode === 'speech'
                     ? 'Your speech input will appear here.'
-                    : <HandDetection />}
+                    : <HandDetection onPrediction={setPrediction} />}
                 </div>
               </div>
 
@@ -306,7 +314,20 @@ function App() {
                 </h2>
 
                 <div className="input-area">
-                  Your output will appear here.
+                  {mode === 'speech' ? (
+                    'Your output will appear here.'
+                  ) : prediction?.label ? (
+                    <>
+                      <h2>{prediction.label}</h2>
+                      <p>
+                        Confidence: {
+                          (prediction.confidence * 100).toFixed(1)
+                        }%
+                      </p>
+                    </>
+                  ) : (
+                    'Waiting for sign recognition...'
+                  )}
                 </div>
               </div>
 
